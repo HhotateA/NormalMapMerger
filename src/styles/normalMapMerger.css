@@ -1,0 +1,120 @@
+body {
+    background: #0d0d0d;
+    color: white;
+    font-family: "Segoe UI", sans-serif;
+  }
+  
+  .container {
+    max-width: 960px;
+    margin: auto;
+    padding: 2rem;
+    text-align: center;
+  }
+  
+  canvas {
+    max-width: 100%;
+    width: 100%;
+    max-height: 512px;
+    aspect-ratio: 1 / 1;
+    border: 1px solid #444;
+    box-shadow: 0 0 12px #00ccff33;
+  }
+  
+  .download-link {
+    display: inline-block;
+    margin-top: 1.2rem;
+    padding: 0.6rem 1.2rem;
+    background-color: #0088cc;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .download-link:hover {
+    background-color: #00aaff;
+    transform: scale(1.05);
+  }
+  
+/*description*/
+  .tool-description {
+    padding: 2rem;
+    background: #181818;
+    border-radius: 8px;
+    color: #eee;
+    margin-top: 2rem;
+    max-width: 960px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .tool-description h2, .tool-description h3 {
+    color: #66ccff;
+    margin-top: 1.5rem;
+  }
+  
+  .tool-description code {
+    background: #333;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    color: #aaf;
+  }
+  
+  .tool-description pre {
+    background: #222;
+    padding: 0.5rem;
+    border-radius: 6px;
+    font-family: monospace;
+    overflow-x: auto;
+  }
+  
+/*license*/
+.license-notice {
+    background: #1b1b1b;
+    padding: 1.5rem;
+    border-radius: 8px;
+    color: #ddd;
+    max-width: 900px;
+    margin: 2rem auto 0;
+  }
+  
+  .license-notice h3,
+  .license-notice h4 {
+    margin-top: 1.2rem;
+    color: #66ccff;
+  }
+  
+  .license-notice ul {
+    margin-left: 1.5rem;
+    padding-left: 0.5rem;
+  }
+  
+  .license-notice strong {
+    color: #aaf;
+  }
+  
+/*canvas*/
+  .canvas-wrapper {
+    width: 512px;
+    height: 512px;
+    margin: auto;
+    position: relative;
+  }
+  
+  canvas.canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    image-rendering: pixelated;
+    border: 1px solid #444;
+    box-shadow: 0 0 12px #00ccff33;
+  }
+  
+  @media (max-width: 600px) {
+    .canvas-wrapper {
+      width: 90vw;
+      height: 90vw;
+    }
+  }
+  
