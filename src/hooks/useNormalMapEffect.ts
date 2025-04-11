@@ -6,7 +6,7 @@ import { normalize, dot, cross, rotate } from "../utils/vectorMath";
  * intensity・src・dstが変わるたびに再計算。
  */
 export function useNormalMapEffect(
-  canvasRef: React.RefObject<HTMLCanvasElement>,
+  canvasRef: React.RefObject<HTMLCanvasElement | null>, 
   imgData1: ImageData | null,
   imgData2: ImageData | null,
   intensity: number,

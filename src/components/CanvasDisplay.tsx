@@ -1,5 +1,7 @@
+import React from "react";
+
 type Props = {
-  canvasRef: React.RefObject<HTMLCanvasElement>;
+  canvasRef: React.RefObject<HTMLCanvasElement | null>;
   downloadUrl: string;
 };
 
