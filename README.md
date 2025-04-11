@@ -1,54 +1,67 @@
-# React + TypeScript + Vite
+ノーマルマップ合成ツールを作りました（React + TypeScript + WebCanvas）
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Unity などのゲームエンジンや 3DCG ツールで頻繁に使われる「ノーマルマップ」。
+モデルの表面の凹凸をポリゴン数を増やさずに表現できるため、非常に便利ですが複数のノーマルマップを合成したい場面って、意外と多くないですか？
+たとえば、
+・服の「大きなシワ」と「布地の質感」を一つにまとめたい。
+・地形の「丘やくぼみ」＋「岩の細かいディテール」を重ねたい。
+そんな用途のために、ノーマルマップを合成できるWebツールを作ってみました！
+ブラウザだけで完結するのでインストール不要、React + TypeScript で実装しています。
 
-Currently, two official plugins are available:
+## 原理
+そもそもノーマルマップとは、「面の向き（法線）」を画像として表現したものです。
+通常、RGB の各成分が XYZ のベクトル方向に対応していて、たとえば：
+(0, 0, 1) → 画面の正面を向いている（= 真っ青）
+(1, 0, 0) → 右方向（赤みが強い）
+(0, 1, 0) → 上方向（緑みが強い）
+多くのノーマルマップが青っぽいのは、基本的に「正面を向いた面」が多いからなんですね。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+さて、「2つのノーマルマップを合成する」とは何を意味するのでしょう？
+少しずつ分解してみましょう。
 
-## Expanding the ESLint configuration
+## 具体例
+まず2枚のノーマルマップを定義します。
+ここでは、
+`base_normal`：ベースとなる法線（例：布地）
+`add_normal`：追加したい変化（例：しわ）
+`result_normal`：合成結果
+と呼ぶことにします。
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Case1,両方が正面を向いている場合
+`base_normal` = (0, 0, 1)
+`add_normal`= (0, 0, 1)
+→ `result_normal`= (0, 0, 1)
+どちらも正面を向いている為、当然そうなると思います。
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+Case2, add_normal が正面
+`base_normal` = (0, 1, 0)（上向き）
+`add_normal`= (0, 0, 1)（正面）
+→ `result_normal`= (0, 1, 0)
+add_normalは正面を向いているため、何も手を加えないことが望ましく合成結果はbase_normalをそのまま出力することになります。
+
+Case3, add_normalが回転
+`base_normal` = (0, 0, 1)（正面）
+`add_normal`= (0, 1, 0)（上向き）
+→ `result_normal`= (0, 1, 0)
+この場合、base_normal に「Zベクトルを add_normal にするような回転」を加えるということになります。
+つまり、add_normal が「正面の法線を上向きに回転させる」ことを意味します。
+
+## 計算式
+「Zベクトルを add_normal にするような回転」とはどのような物でしょう。
+それを実現するには、
+・回転軸を求める（Zベクトルと add_normal の外積）
+・回転角を求める（Zベクトルと add_normal の内積 → acos）
+この2つが分かれば、ロドリゲスの回転公式を使って、任意のベクトルを回転させることができます。
+今回は
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+// 回転軸：cross([0, 0, 1], add_normal)
+// 回転角：angle = acos(dot([0, 0, 1], add_normal))
+// 回転適用：rotate(base_normal, axis, angle * intensity)
 ```
+このようにして、1ピクセルずつノーマルマップを合成していきます。
+
+## あとがき
+今回のツールは、Reactの勉強を兼ねて制作しました。
+ベクトルの扱いやCanvas描画など、普段の業務では触れない部分も多く、良いトレーニングになりました。
+デザインやUI調整は ChatGPT にかなり助けてもらいました。
+コードはGitHubで公開予定なので、気になる方はぜひ見てみてください！
