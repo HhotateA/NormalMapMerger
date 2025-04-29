@@ -20,7 +20,7 @@ export default function CanvasDisplay({ canvasRef, downloadUrl }: Props) {
       const resolution = canvas
         ? `${canvas.width}x${canvas.height}`
         : "unknown";
-      gtag('event', 'download_normal_map', {
+      window.gtag('event', 'download_normal_map', {
         event_category: 'normal_map_merger',
         event_label: resolution,
         value: 1
