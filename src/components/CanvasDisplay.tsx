@@ -1,4 +1,6 @@
+declare const gtag: (...args: any[]) => void;
 import React from "react";
+
 
 type Props = {
   canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -14,9 +16,13 @@ type Props = {
 export default function CanvasDisplay({ canvasRef, downloadUrl }: Props) {
   const handleDownloadClick = () => {
     if (typeof gtag !== "undefined") {
+      const canvas = canvasRef.current;
+      const resolution = canvas
+        ? `${canvas.width}x${canvas.height}`
+        : "unknown";
       gtag('event', 'download_normal_map', {
-        event_category: 'normal_map_tool',
-        event_label: 'Normal Map Download',
+        event_category: 'normal_map_merger',
+        event_label: resolution,
         value: 1
       });
     }
